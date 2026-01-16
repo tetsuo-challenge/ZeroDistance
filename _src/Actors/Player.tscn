@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://player_scene_auto_gen"]
+[gd_scene load_steps=13 format=3 uid="uid://player_scene_auto_gen"]
 
 [ext_resource type="Script" path="res://_src/Actors/Player.gd" id="1_player"]
 [ext_resource type="Texture2D" path="res://icon.svg" id="2_sprite"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://_src/Components/HurtboxComponent.gd" id="5_hurtbox"]
 [ext_resource type="Script" path="res://_src/Components/WeaponComponent.gd" id="6_weapon"]
 [ext_resource type="Script" path="res://_src/Components/HitboxComponent.gd" id="7_hitbox"]
+[ext_resource type="Script" path="res://_src/Components/ShakeComponent.gd" id="8_shake"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 20.0
@@ -62,3 +63,11 @@ health_component = NodePath("../HealthComponent")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxComponent"]
 shape = SubResource("CircleShape2D_hurtbox")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(1.5, 1.5)
+position_smoothing_enabled = true
+
+[node name="ShakeComponent" type="Node" parent="Camera2D" node_paths=PackedStringArray("target")]
+script = ExtResource("8_shake")
+target = NodePath("..")

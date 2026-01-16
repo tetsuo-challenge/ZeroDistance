@@ -1,8 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://sandbox_level_sc"]
+[gd_scene load_steps=6 format=3 uid="uid://cedhcru4hf2c3"]
 
-[ext_resource type="PackedScene" uid="uid://player_scene_auto_gen" path="res://_src/Actors/Player.tscn" id="1_player"]
-[ext_resource type="PackedScene" uid="uid://spyder_enemy_scene" path="res://_src/Actors/Spyder.tscn" id="2_enemy"]
-[ext_resource type="PackedScene" uid="uid://hud_scene_auto_gen" path="res://_src/UI/HUD.tscn" id="3_hud"]
+[ext_resource type="PackedScene" path="res://_src/Actors/Player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://_src/Actors/Spyder.tscn" id="2_enemy"]
+[ext_resource type="PackedScene" path="res://_src/UI/HUD.tscn" id="3_hud"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_bg"]
 size = Vector2(2000, 2000)
@@ -11,17 +11,15 @@ size = Vector2(2000, 2000)
 background_mode = 3
 glow_enabled = true
 glow_intensity = 0.5
-glow_strength = 1.0
 glow_bloom = 0.5
 glow_blend_mode = 0
-chromatic_aberration_enabled = true
-chromatic_aberration_strength = 0.0
 
 [node name="Sandbox" type="Node2D"]
 
 [node name="HUD" parent="." instance=ExtResource("3_hud")]
 
 [node name="Background" type="Sprite2D" parent="."]
+z_index = -100
 modulate = Color(0.05, 0.05, 0.08, 1)
 texture = SubResource("PlaceholderTexture2D_bg")
 
@@ -36,7 +34,7 @@ horizontal_alignment = 1
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 
-[node name="Camera2D" type="Camera2D" parent="Player"]
+[node name="Camera2D2" type="Camera2D" parent="Player"]
 zoom = Vector2(1.5, 1.5)
 position_smoothing_enabled = true
 

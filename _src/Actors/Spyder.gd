@@ -35,6 +35,23 @@ func _ready() -> void:
 	
 	if health_component:
 		health_component.died.connect(_on_death)
+		
+	# Connect Hit Logic
+	var hurtbox = get_node_or_null("HurtboxComponent")
+	if hurtbox:
+		hurtbox.hit_received.connect(_on_hit_received)
+
+func _on_hit_received(hitbox: HitboxComponent) -> void:
+	# 1. Screen Shake (Disabled for debugging)
+	# GameManager.shake_camera(0.3)
+	
+	# 2. Hit Stop (Disabled - Stressful)
+	# GameManager.hit_stop(0.15, 0.01, 0.0) 
+	
+	# 3. Hit Flash (Visual)
+	var tween = create_tween()
+	visual_sprite.modulate = Color(1.0, 0.0, 0.0) # Standard Red Flash
+	tween.tween_property(visual_sprite, "modulate", Color.WHITE, 0.2)
 
 func _on_death() -> void:
 	GameManager.add_score(1)
@@ -114,7 +131,7 @@ func _change_state(new_state: State) -> void:
 			visual_sprite.modulate = Color.WHITE
 			hitbox_component.is_active = false
 		State.TELEGRAPH:
-			visual_sprite.modulate = Color(10.0, 0.5, 0.5) # Flash Bright Red (HDR)
+			visual_sprite.modulate = Color(1.0, 0.2, 0.2) # Bright Red (No HDR)
 			attack_timer = TELEGRAPH_DURATION
 			hitbox_component.is_active = false
 		State.ATTACK:

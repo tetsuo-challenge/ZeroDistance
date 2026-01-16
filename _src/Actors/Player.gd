@@ -44,10 +44,15 @@ func _on_death() -> void:
 		hurtbox_component.set_deferred("monitoring", false)
 
 func _on_hit_received(hitbox: HitboxComponent) -> void:
-	# print("DEBUG: Player took damage from ", hitbox.name)
-	# GameManager.hit_stop used to be here, but user requested no hit stop on damage.
-	# Add simple flash later?
-	pass
+	# Impact Feedback
+	# GameManager.hit_stop(0.15, 0.05, 0.0) # Disabled to fix blackout bug
+	# GameManager.shake_camera(0.6) # Disabled to fix blackout bug
+	
+	# 3. Hit Flash (Visual)
+	# Dark Red Flash (No HDR)
+	var tween = create_tween()
+	$Sprite2D.modulate = Color(1.0, 0.0, 0.0) # Standard Red Flash
+	tween.tween_property($Sprite2D, "modulate", Color.WHITE, 0.3)
 
 func _physics_process(delta: float) -> void:
 	# Priority: Counter Rush > Dodge > Attack > Movement
@@ -113,11 +118,34 @@ func _handle_movement(delta: float) -> void:
 	if input_vector != Vector2.ZERO:
 		# Accelerate
 		velocity = velocity.move_toward(input_vector * max_speed, acceleration * delta)
+		
+		# Ghost Trail Effect (Juice)
+		if GameManager.is_slow_motion:
+			_spawn_ghost_trail()
 	else:
 		# Friction
 		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 	
 	move_and_slide()
+
+var _ghost_timer: float = 0.0
+func _spawn_ghost_trail() -> void:
+	_ghost_timer += get_process_delta_time() # Use raw delta?
+	if _ghost_timer < 0.05: return
+	_ghost_timer = 0.0
+	
+	# Create Sprite Copy
+	var ghost = Sprite2D.new()
+	ghost.texture = $Sprite2D.texture
+	ghost.scale = $Sprite2D.scale
+	ghost.global_position = global_position
+	ghost.modulate = Color(0.5, 1.0, 1.0, 0.5) # Cyan Ghost
+	ghost.z_index = z_index - 1
+	
+	# Attach Script for Auto-Fade
+	ghost.set_script(load("res://_src/Effects/GhostTrail.gd"))
+	
+	get_parent().add_child(ghost)
 
 # Called by Game Loop when inside Kill Circle logic check is needed
 func get_kill_circle_radius_squared() -> float:

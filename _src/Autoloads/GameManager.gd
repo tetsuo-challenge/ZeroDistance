@@ -43,18 +43,9 @@ func start_slow_motion(duration: float = 1.0, scale: float = 0.1) -> void:
 	is_slow_motion = true
 	Engine.time_scale = scale
 	
-	# 1. Screen Flash (Flashbang)
-	var canvas = CanvasLayer.new()
-	var color_rect = ColorRect.new()
-	color_rect.color = Color.WHITE
-	color_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	canvas.add_child(color_rect)
-	get_tree().root.add_child(canvas)
-	
-	# Tween Flash
-	var tween = create_tween().set_ignore_time_scale(true)
-	tween.tween_property(color_rect, "modulate:a", 0.0, 0.3).from(1.0)
-	tween.tween_callback(canvas.queue_free)
+	# 1. Screen Flash (Disabled - Too Bright)
+	# var canvas = CanvasLayer.new()
+	# ...
 	
 	# 2. Chromatic Aberration (Distortion)
 	# Hacky way to find WorldEnvironment in current scene for prototype
@@ -97,3 +88,11 @@ func trigger_game_over() -> void:
 	await get_tree().create_timer(2.0).timeout
 	score = 0
 	get_tree().reload_current_scene()
+
+func shake_camera(intensity: float = 0.5) -> void:
+	# Find active camera and its ShakeComponent
+	var camera = get_viewport().get_camera_2d()
+	if camera:
+		var shaker = camera.get_node_or_null("ShakeComponent")
+		if shaker:
+			shaker.add_trauma(intensity)

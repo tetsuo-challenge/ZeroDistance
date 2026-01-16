@@ -1,1 +1,4 @@
 res://_src/Actors/Player.gd
+res://_src/Actors/Spyder.gd
+res://_src/Autoloads/GameManager.gd
+res://_src/Levels/Sandbox.tscn
