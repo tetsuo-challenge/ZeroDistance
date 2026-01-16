@@ -37,6 +37,7 @@ func _ready() -> void:
 		health_component.died.connect(_on_death)
 
 func _on_death() -> void:
+	GameManager.add_score(1)
 	queue_free()
 
 func _physics_process(delta: float) -> void:

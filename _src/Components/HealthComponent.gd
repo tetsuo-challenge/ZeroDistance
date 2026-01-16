@@ -34,4 +34,7 @@ func heal(amount: float) -> void:
     _emit_health_changed()
 
 func _emit_health_changed() -> void:
-    health_changed.emit(current_health, max_health)
+    health_changed.emit(current_health) # Changed to match HUD expectation just in case, or update HUD to accept 2 args?
+    # Actually, let's keep it clean. HUD.gd: _on_health_changed(new_health: float)
+    # Signal: health_changed(new_health, max_health)
+    # This works in Godot 4.

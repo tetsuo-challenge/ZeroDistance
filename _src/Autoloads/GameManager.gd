@@ -5,6 +5,12 @@ extends Node
 ## Handles global game state and time manipulation.
 ## Registered as an Autoload/Singleton.
 
+signal score_updated(new_score: int)
+signal game_over
+
+var score: int = 0
+
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS # Keep running even when game is paused
 
@@ -78,3 +84,16 @@ func start_slow_motion(duration: float = 1.0, scale: float = 0.1) -> void:
 
 	Engine.time_scale = 1.0
 	is_slow_motion = false
+
+func add_score(points: int) -> void:
+	score += points
+	score_updated.emit(score)
+	
+func trigger_game_over() -> void:
+	print("Game Over! Final Score: ", score)
+	game_over.emit()
+	
+	# Simple restart after 2 seconds
+	await get_tree().create_timer(2.0).timeout
+	score = 0
+	get_tree().reload_current_scene()

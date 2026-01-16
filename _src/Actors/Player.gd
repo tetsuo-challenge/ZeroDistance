@@ -16,6 +16,8 @@ extends CharacterBody2D
 # Node References
 @onready var kill_circle_visual: Node2D = $KillCircleVisual
 @onready var hurtbox_component: HurtboxComponent = $HurtboxComponent
+@onready var health_component: HealthComponent = $HealthComponent
+@onready var weapon_pivot: WeaponComponent = $WeaponPivot
 
 func _ready() -> void:
 	add_to_group("Player")
@@ -28,6 +30,19 @@ func _ready() -> void:
 	if kill_circle_visual:
 		kill_circle_visual.radius = kill_circle_radius
 
+	if health_component:
+		health_component.died.connect(_on_death)
+
+func _on_death() -> void:
+	GameManager.trigger_game_over()
+	# queue_free() # Don't free to keep camera active
+	hide()
+	set_physics_process(false)
+	$CollisionShape2D.set_deferred("disabled", true)
+	if hurtbox_component:
+		hurtbox_component.set_deferred("monitorable", false)
+		hurtbox_component.set_deferred("monitoring", false)
+
 func _on_hit_received(hitbox: HitboxComponent) -> void:
 	# print("DEBUG: Player took damage from ", hitbox.name)
 	# GameManager.hit_stop used to be here, but user requested no hit stop on damage.
@@ -35,15 +50,25 @@ func _on_hit_received(hitbox: HitboxComponent) -> void:
 	pass
 
 func _physics_process(delta: float) -> void:
-	# Priority: Counter Rush > Dodge > Movement
+	# Priority: Counter Rush > Dodge > Attack > Movement
 	if GameManager.is_slow_motion:
 		_check_counter_rush()
+	else:
+		_check_weapon_attack()
 			
 	_handle_movement(delta)
 	
 	# Only check Just Dodge if NOT in slow motion (don't stack slow mo)
 	if not GameManager.is_slow_motion:
 		_check_just_dodge()
+
+func _check_weapon_attack() -> void:
+	if Input.is_action_just_pressed("attack"): # Assuming 'attack' action exists or we use Left Click
+		if weapon_pivot:
+			# Attack towards mouse
+			var mouse_pos = get_global_mouse_position()
+			var direction = (mouse_pos - global_position).normalized()
+			weapon_pivot.attack(direction)
 
 func _check_counter_rush() -> void:
 	if Input.is_action_just_pressed("dodges"):
