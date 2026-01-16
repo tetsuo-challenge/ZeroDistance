@@ -1,0 +1,51 @@
+# Game Design Document (The Soul)
+**Title**: ZERO DISTANCE
+**Genre**: Top-down Counter Action (Arena)
+**Concept**: "Enter the Dead Zone to Kill." (High Risk, High Return)
+
+This document defines the **CORE FUN** and **GAMEPLAY RULES**.
+All mechanics must serve the "Risk and Return" philosophy.
+
+---
+
+## 1. Core Loop
+The game loop consists of 5 steps:
+1.  **Lure**: Player enters their own "Kill Circle" (Aura) to invite enemies.
+2.  **Risk**: Wait for the enemy to start an attack (Telegraph).
+3.  **Action**: Dodge exactly when the enemy's hitbox is active.
+4.  **Reward**: **"Just Dodge"** triggers, slowing down time. Counter-attack becomes available.
+5.  **Growth**: Pick up higher quality weapons (Auto-Upgrade) without stopping.
+
+## 2. Player Mechanics
+-   **Movement**: WASD / Left Stick. Fast and responsive.
+-   **Kill Circle (The Aura)**:
+    -   Visual: A faint, dark particle/shader aura around the player.
+    -   Function: Represents the "Counter Range".
+-   **Just Dodge Logic (Crucial)**:
+    -   Condition A: Enemy is inside the "Kill Circle".
+    -   Condition B: Enemy is currently `ATTACKING` (Active Hitbox).
+    -   Trigger: Player presses `DODGE` button while A and B are true.
+    -   Result: **Global Slow Motion** (Time Scale 0.1 for 0.5s) + Screen Flash.
+
+## 3. Enemy Design (Melee Only)
+-   **Fairness**: No sudden instant hits.
+    -   **Telegraph Phase**: 0.5s warning (Flash/Wind-up).
+    -   **Attack Phase**: 0.2s duration (The active hitbox window).
+-   **Behavior**:
+    -   Enemies crowd around the player but do not overlap (Separation force).
+    -   No projectiles (Guns). Pure melee spacing game.
+
+## 4. Weapon System (Flow State)
+-   **No Inventory Management**:
+    -   Weapons have no durability.
+    -   **Auto-Loot**: If a dropped weapon has a higher `Quality Tier` than the current one, it is automatically equipped upon collision.
+    -   Benefit: Player never stops moving to check stats.
+
+## 5. Game Feel (Sakurai Philosophy)
+-   **Static vs Dynamic**: The game is quiet until a Just Dodge occurs. Then it explodes with sound and visual distortion.
+-   **Hit Stop**: Every successful hit freezes the frame for 0.1s to convey "Weight".
+-   **Visuals**: Dark arena, Neon entities. High contrast for visibility.
+
+---
+**End of Design Document.**
+Implement the game mechanics to strictly follow these rules.

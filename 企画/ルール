@@ -1,0 +1,76 @@
+# Technical Constitution (Code Conventions & Architecture)
+**Project**: ZERO DISTANCE
+**Engine**: Godot 4.x (GDScript)
+**Philosophy**: Modular, Data-Driven, Strictly Typed.
+
+This document defines the **MANDATORY** technical standards for this project.
+All code generated must adhere to these rules without exception.
+
+---
+
+## 1. Directory Structure (File Organization)
+Keep the root clean. Organize assets by type, then by context.
+
+- `res://_src/Actors/` : Player, Enemy scenes & scripts.
+- `res://_src/Components/` : Reusable logic nodes (Health, Hitbox, etc.).
+- `res://_src/Resources/` : Custom Resource data (.tres files).
+- `res://_src/UI/` : HUD, Menus.
+- `res://_src/Levels/` : Main Game Scene, Arena maps.
+- `res://_src/Autoloads/` : Global Managers (GameManager, SoundManager).
+
+## 2. Architecture: Composition Over Inheritance
+**PROHIBITED**: Do NOT create a giant `Enemy.gd` with health, movement, and attack logic all in one file.
+**MANDATORY**: Use **Nodes as Components**.
+
+### Required Components:
+1.  **HealthComponent** (`Node`):
+    -   Variables: `max_health`, `current_health`.
+    -   Signals: `died`, `health_changed(new_value)`.
+    -   Logic: Handles damage calculation and death triggers.
+2.  **HitboxComponent** (`Area2D`):
+    -   Purpose: Defines the area that inflicts damage.
+    -   Export: `damage_amount`, `hit_group` (Enum).
+3.  **HurtboxComponent** (`Area2D`):
+    -   Purpose: Detects incoming Hitboxes.
+    -   Logic: Connects to `HealthComponent` to apply damage.
+4.  **VelocityComponent** (Recommended):
+    -   Handles acceleration/friction physics.
+
+## 3. Data-Driven Design (Resources)
+Balance parameters must NOT be hardcoded in scripts. Use `Resource` files.
+
+-   **WeaponData** (`Resource` script):
+    -   `@export var weapon_name: String`
+    -   `@export var quality_tier: int`
+    -   `@export var damage: float`
+    -   `@export var sprite: Texture2D`
+    -   `@export var hit_stop_duration: float` (For game feel)
+    -   `@export var screen_shake_amount: float`
+
+*Reason*: Allows game designers to create new weapons and tweak balance via the Inspector without touching code.
+
+## 4. Coding Standards (The Law)
+1.  **Strict Typing**: Every variable and function MUST have a type hint.
+    -   `var health: float = 100.0` (Good)
+    -   `var health = 100` (Bad)
+    -   `func take_damage(amount: float) -> void:` (Good)
+2.  **Signal Driven**:
+    -   Nodes should communicate via Signals, not by direct reference (`get_node("..")`).
+    -   UI updates must listen to Signals from the Player/Manager.
+3.  **English Naming**:
+    -   **ALL code (variables, functions, classes) must be in English.**
+    -   Use `snake_case` for functions/variables.
+    -   Use `PascalCase` for Class names.
+
+## 5. Global Scope (Autoloads)
+Limit Global access to the bare minimum.
+
+-   **GameManager.gd**:
+    -   `func freeze_frame(duration: float)`: Handles Hit Stop.
+    -   `func start_slow_motion(duration: float, time_scale: float)`: Handles Just Dodge effect.
+-   **SoundManager.gd**:
+    -   Handles AudioStreamPlayers. Prevents sound overlapping.
+
+---
+**End of Constitution.**
+Acknowledge this structure. Combine this with the "Design Document" (Soul) provided earlier, and start the implementation.

@@ -1,0 +1,41 @@
+[gd_scene load_steps=8 format=3 uid="uid://player_scene_auto_gen"]
+
+[ext_resource type="Script" path="res://_src/Actors/Player.gd" id="1_player"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="2_sprite"]
+[ext_resource type="Script" path="res://_src/Actors/KillCircleVisual.gd" id="3_visual"]
+[ext_resource type="Script" path="res://_src/Components/HealthComponent.gd" id="4_health"]
+[ext_resource type="Script" path="res://_src/Components/HurtboxComponent.gd" id="5_hurtbox"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 20.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hurtbox"]
+radius = 20.0
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_player")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("2_sprite")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_body")
+
+[node name="KillCircleVisual" type="Node2D" parent="."]
+script = ExtResource("3_visual")
+radius = 150.0
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("4_health")
+
+[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("health_component")]
+collision_layer = 0
+collision_mask = 16
+script = ExtResource("5_hurtbox")
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxComponent"]
+shape = SubResource("CircleShape2D_hurtbox")
